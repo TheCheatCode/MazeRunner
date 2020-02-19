@@ -7,11 +7,12 @@ public class MazeRunner {
 
         boolean victory = false;
         int moves = 0;
+        char previousDirection = 'R';
 
         intro(myMap);
 
         while (!victory && moves < 100) {
-            userMove(myMap, in);
+            previousDirection = userMove(myMap, in, previousDirection);
             moves++;
 
             victory = myMap.didIWin();
@@ -34,11 +35,17 @@ public class MazeRunner {
         myMap.printMap();
     }
 
-    private static void userMove(Maze myMap, Scanner in) {
+    private static char userMove(Maze myMap, Scanner in, char previousDirection) {
         boolean validInput = false;
+        String stringDirection = Character.toString(previousDirection);
+        char userDirection = previousDirection;
+
+        if (myMap.isThereAPit(stringDirection)) {
+            validInput = navigatePit(myMap, in, stringDirection);
+        }
 
         while (!validInput) {
-            char userDirection = getUserDirection(in);
+            userDirection = getUserDirection(in);
 
             switch (userDirection) {
                 case 'R':   validInput = true;
@@ -73,6 +80,8 @@ public class MazeRunner {
             }
         }
         myMap.printMap();
+
+        return userDirection;
     }
 
     private static char getUserDirection(Scanner in) {
@@ -98,5 +107,18 @@ public class MazeRunner {
                         break;
             default:    break;
         }
+    }
+
+    private static boolean navigatePit(Maze myMap, Scanner in, String userDirection) {
+        System.out.print("Watch out! There's a pit ahead, jump it?");
+        String userInput = in.nextLine().toUpperCase();
+        System.out.println();
+
+        if (userInput.toUpperCase().startsWith("Y")) {
+            myMap.jumpOverPit(userDirection.toUpperCase());
+            return true;
+        }
+
+        return false;
     }
 }
