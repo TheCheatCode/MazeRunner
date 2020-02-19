@@ -5,9 +5,26 @@ public class MazeRunner {
         Maze myMap = new Maze();
         Scanner in = new Scanner(System.in);
 
+        boolean victory = false;
+        int moves = 0;
+
         intro(myMap);
 
-        userMove(myMap, in);
+        while (!victory && moves < 100) {
+            userMove(myMap, in);
+            moves++;
+
+            victory = myMap.didIWin();
+            if (!victory)
+                moveMessages(moves);
+        }
+
+        if (victory) {
+            System.out.println("Congratulations, you made it out alive!");
+            System.out.println("and you did it in " + moves + " moves!");
+        } else {
+            System.out.println("Sorry, but you didn't escape in time- you lose!");
+        }
     }
 
     private static void intro(Maze myMap) {
@@ -67,5 +84,19 @@ public class MazeRunner {
             return userInput.charAt(0);
         }
         return ' ';
+    }
+
+    private static void moveMessages(int moves) {
+        switch (moves) {
+            case 50:    System.out.println("Warning: You have made 50 moves, you have 50 remaining before the maze exit closes.");
+                        break;
+            case 75:    System.out.println("Alert! You have made 75 moves, you only have 25 moves left to escape.");
+                        break;
+            case 90:    System.out.println("DANGER! You have made 90 moves, you only have 10 moves left to escape!!");
+                        break;
+            case 100:   System.out.println("Oh no! You took too long to escape, and now the maze exit is closed FOREVER >:[");
+                        break;
+            default:    break;
+        }
     }
 }
